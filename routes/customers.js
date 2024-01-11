@@ -43,17 +43,11 @@ router.get('/getOne/:id', async (req, res) => {
     }
 })
 
-router.get('/getnomer/', async (req, res) => {
+router.post('/getnomer/', async (req, res) => {
     try {
-        var s = req.body.s;
-        var data = await Model.find({no_id: s})
-    
-        if(data.length > 0 ) {
-            res.status(200).send({ success: true, msg: "Customer Details", data:data})
-        }
-        else {
-            res.status(200).send({success:true, msg: "Customer Not found!"})
-        }
+        var nomer = req.body.nomer;
+        var data = await Model.findOne({no_id: nomer})
+        return  res.status(200).send({ success: true,msg: "Customer Details", user:data});
        } catch (error) {
             res.status(400).send({success:false, msg: error.message})
        }
