@@ -32,7 +32,23 @@ exports.protect = async (req, res, next) => {
 // authorization
 
 exports.checkAdmin = async (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && req.user.typeuser === 'Admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'You do not have permission to perform this action' });
+  }
+}
+
+exports.checkModerator = async (req, res, next) => {
+  if  (req.user && req.user.usertype === 'Moderator') {
+    next();
+  } else {
+    res.status(403).json({ message: 'You do not have permission to perform this action' });
+  }
+}
+
+exports.checkUser = async (req, res, next) => {
+  if  (req.user && req.user.usertype === 'User') {
     next();
   } else {
     res.status(403).json({ message: 'You do not have permission to perform this action' });

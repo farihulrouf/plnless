@@ -10,6 +10,7 @@ app.use(express.json());
 const customers = require('./routes/customers')
 const transactions = require('./routes/transactions')
 const users = require('./routes/users')
+const contents = require('./routes/contents')
 
 app.get('/', (req, res) => {
     res.send('Hey this is my API running 🥳')
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
 app.use('/customers', customers)
 app.use('/transactions', transactions)
 app.use('/users', users)
-
+app.use('/contents', contents)
 
 //app.use('/users', users)
 app.listen(3000, () => {
