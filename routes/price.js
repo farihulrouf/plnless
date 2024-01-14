@@ -6,6 +6,8 @@ router.post('/post', async (req, res) => {
     const data = new Model({
         harga: req.body.harga,
         satuan: req.body.satuan,
+        minimum: req.body.minimum,
+        maximum: req.body.maximum
     })
 
     try {
