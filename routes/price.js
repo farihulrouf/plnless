@@ -19,4 +19,15 @@ router.post('/post', async (req, res) => {
     }
 })
 
+
+router.get('/getall', async (req, res) => {
+    try {
+        const data = await Model.find();
+        res.json(data)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
 module.exports = router;

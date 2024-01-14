@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
 const dataSchema = new mongoose.Schema({
-
-
     harga: {
         required: true,
         type: Number
