@@ -7,7 +7,11 @@ const transactionSchema = new mongoose.Schema({
         trim: true,
         
     },
-
+    noinv: {
+        type: Number,
+        required: [true, "Amount is required"],
+        default: 0,
+    },
     amount: {
         type: Number,
         required: [true, "Amount is required"],

@@ -5,7 +5,7 @@ const Customer = require('../models/customer');
 const Transaction = require('../models/transaction')
 router.post("/post", async (req, res) => {
   try {
-    const { title, amount, date, customerId, transactionType } = req.body;
+    const { title, amount, date, customerId, transactionType, noinv } = req.body;
 
     if (!title || !amount || !date || !transactionType) {
       return res.status(408).json({
@@ -28,6 +28,7 @@ router.post("/post", async (req, res) => {
       date: date,
       customer: customerId,
       transactionType: transactionType,
+      noinv: noinv
     });
     //customer.transactions.push(newTransaction);
 

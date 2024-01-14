@@ -11,7 +11,7 @@ const customers = require('./routes/customers')
 const transactions = require('./routes/transactions')
 const users = require('./routes/users')
 const contents = require('./routes/contents')
-
+const prices = require('./routes/price')
 app.get('/', (req, res) => {
     res.send('Hey this is my API running 🥳')
 })
@@ -21,7 +21,7 @@ app.use('/customers', customers)
 app.use('/transactions', transactions)
 app.use('/users', users)
 app.use('/contents', contents)
-
+app.use('/price', prices)
 //app.use('/users', users)
 app.listen(3000, () => {
     //console.log(`Server Started at ${3000}`)
