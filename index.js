@@ -21,7 +21,7 @@ app.use('/customers', customers)
 app.use('/transactions', transactions)
 app.use('/users', users)
 app.use('/contents', contents)
-app.use('/price', prices)
+app.use('/prices', prices)
 //app.use('/users', users)
 app.listen(3000, () => {
     //console.log(`Server Started at ${3000}`)

@@ -9,15 +9,11 @@ const dataSchema = new mongoose.Schema({
     },
     minimum: {
         required: true,
-        type: Number,
-        min: 1,
-        max: 1000
+        type: Number
     },
     maximum: {
         required: true,
-        type: Number,
-        min: 5,
-        max: 1000
+        type: Number
     },
     satuan: {
         required: true,
