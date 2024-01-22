@@ -18,6 +18,17 @@ const transactionSchema = new mongoose.Schema({
         default: 0,
     },
 
+    meteran: {
+        type: Number,
+        required: [true, "Amount is required"],
+        default: 0,
+    },
+
+    no_id: {
+        required: true,
+        type: Number,
+    },
+
     transactionType: {
         type: String,
         required: [true, "Transaction Type is required"],

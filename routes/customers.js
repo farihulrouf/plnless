@@ -22,7 +22,7 @@ router.post('/post', async (req, res) => {
 })
 
 //Get all Method
-router.get('/getAll',auth.protect, async (req, res) => {
+router.get('/getall',auth.protect, async (req, res) => {
     try {
         const data = await Model.find();
         res.json(data)
@@ -31,6 +31,8 @@ router.get('/getAll',auth.protect, async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
+
+
 
 //Get by ID Method
 router.get('/getOne/:id', async (req, res) => {
@@ -52,6 +54,36 @@ router.post('/getnomer/', async (req, res) => {
             res.status(400).send({success:false, msg: error.message})
        }
 })
+
+/*
+router.post('/getransactions/', async (req, res) => {
+    try {
+        const no_id = req.body.nomer
+        const data = await Model.aggregate([
+            {
+                $match: {
+                   no_id: no_id
+                }
+             },
+            
+            {
+                $lookup: {
+                    from: 'transactions',
+                    localField: "no_id",
+                    foreignField: "no_id",
+                    as: 'transactions',
+                },
+            },
+            
+            
+        ]);
+        //console.log(`${no_id}`)
+        return  res.status(200).send({ success: true,msg: "Customer Details", user:data});
+    } catch (error) {
+        res.status(400).send({success:false, msg: error.message})
+    }
+})
+*/
 
 
 router.get('/search/', async(req, res) => {
