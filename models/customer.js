@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const mongoosePaginate = require('mongoose-paginate-v2');
 const dataSchema = new mongoose.Schema({
     name: {
         required: true,
@@ -37,4 +37,14 @@ const dataSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Customer', dataSchema)
+//module.exports = mongoose.model('Customer', dataSchema)
+
+dataSchema.plugin(mongoosePaginate);
+const Customermodel = mongoose.model('Customer', dataSchema);
+Customermodel.paginate().then({}); // Usage
+
+//partSchema.plugin(mongoosePaginate);
+
+//const part = mongoose.model("part", partSchema);
+
+module.exports = Customermodel;

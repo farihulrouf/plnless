@@ -2,6 +2,41 @@ const express = require('express');
 const Model = require('../models/customer');
 const router = express.Router();
 const auth = require('../middlewares/authJwt')
+
+
+const getPagination = (page, size) => {
+    const limit = size ? +size : 2;
+    const offset = page ? page * limit : 0;
+  
+    return { limit, offset };
+};
+
+router.get('/getall', async (req, res) => {
+    const { page, size, name } = req.query;
+    var condition = name
+      ? { name: { $regex: new RegExp(name), $options: "i" } }
+      : {};
+  
+    const { limit, offset } = getPagination(page, size);
+  
+    Model.paginate(condition, { offset, limit })
+      .then((data) => {
+        res.send({
+          totalItems: data.totalDocs,
+          customers: data.docs,
+          totalPages: data.totalPages,
+          currentPage: data.page - 1,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving tutorials.",
+        });
+      });
+
+})
+
 //Post Method
 router.post('/post', async (req, res) => {
     const data = new Model({
@@ -22,6 +57,7 @@ router.post('/post', async (req, res) => {
 })
 
 //Get all Method
+/*
 router.get('/getall',auth.protect, async (req, res) => {
     try {
         const data = await Model.find();
@@ -31,6 +67,7 @@ router.get('/getall',auth.protect, async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
+*/
 
 
 

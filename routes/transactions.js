@@ -16,7 +16,7 @@ router.post("/post", async (req, res) => {
       meteran,
     } = req.body;
 
-    if (!title || !amount || !date || !transactionType) {
+    if (!title || !amount || !transactionType) {
       return res.status(408).json({
         success: false,
         messages: "Please Fill all fields",
