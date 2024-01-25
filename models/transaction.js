@@ -29,6 +29,11 @@ const transactionSchema = new mongoose.Schema({
         type: Number,
     },
 
+    status: {
+        type: Boolean,
+        default: false
+    },
+
     transactionType: {
         type: String,
         required: [true, "Transaction Type is required"],
