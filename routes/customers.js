@@ -42,7 +42,7 @@ router.post('/post', async (req, res) => {
         name: req.body.name,
         no_id: req.body.no_id,
         no_tel: req.body.no_tel,
-        address: req.body.address,
+        addres: req.body.addres,
         gender: req.body.gender
     })
 
@@ -71,7 +71,7 @@ router.get('/getall',auth.protect, async (req, res) => {
 
 
 //Get by ID Method
-router.get('/getOne/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const data = await Model.findById(req.params.id);
         res.json(data)
