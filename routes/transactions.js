@@ -58,6 +58,18 @@ router.post("/post", async (req, res) => {
   }
 });
 
+router.post('/getid', async(req,res) => {
+
+   const customer = req.body.id
+  try {
+        const data = await Transaction.find({customer: `${customer}`});
+        res.json(data)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
 router.post("/getransactions/", async (req, res) => {
   try {
     const no_id = req.body.nomer;
@@ -86,6 +98,7 @@ router.post("/getransactions/", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
+
 
 /*
 export const getAllTransactionController = async (req, res) => {

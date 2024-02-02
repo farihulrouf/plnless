@@ -15,9 +15,9 @@ router.get('/getall', async (req, res) => {
     var condition = name
       ? { name: { $regex: new RegExp(name), $options: "i" } }
       : {};
-  
+     
     const { limit, offset } = getPagination(page, size);
-  
+  //{ sort: 'desc' }
     Model.paginate(condition, { offset, limit })
       .then((data) => {
         res.send({
@@ -25,6 +25,7 @@ router.get('/getall', async (req, res) => {
           customers: data.docs,
           totalPages: data.totalPages,
           currentPage: data.page - 1,
+          
         });
       })
       .catch((err) => {
