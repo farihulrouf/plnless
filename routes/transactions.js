@@ -60,7 +60,7 @@ router.post("/post", async (req, res) => {
 
 router.post('/getid', async(req,res) => {
 
-   const customer = req.body.id
+   const customer = req.body.no
   try {
         const data = await Transaction.find({customer: `${customer}`});
         res.json(data)
