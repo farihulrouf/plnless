@@ -3,6 +3,13 @@ const moment = require("moment");
 const router = express.Router();
 const Customer = require("../models/customer");
 const Transaction = require("../models/transaction");
+
+const getPagination = (page, size) => {
+  const limit = size ? +size : 5;
+  const offset = page ? page * limit : 0;
+  return { limit, offset };
+};
+
 router.post("/post", async (req, res) => {
   try {
     const {
@@ -58,17 +65,49 @@ router.post("/post", async (req, res) => {
   }
 });
 
-router.post('/getid', async(req,res) => {
-
-   const customer = req.body.no
+router.post("/getid", async (req, res) => {
+  const { page = 1, limit = 3 } = req.query
+  const id = req.body.no
+  //console.log('id customer', id)
   try {
-        const data = await Transaction.find({customer: `${customer}`});
-        res.json(data)
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
+    // execute query with page and limit values
+    const transaction = await Transaction.find({ customer: `${id}` }).sort({ created_at: 'desc' })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    // get total documents in the Posts collection
+    const count = await Transaction.countDocuments({ customer: `${id}` });
+
+    // return response with posts, total pages, and current page
+    res.json({
+      data: transaction,
+      totalPages: Math.ceil(count / limit),
+      totalitems: count,
+      currentPage: page,
+    });
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  {
+    /*
+  const { page, size, name } = req.query;
+  var condition = name
+    ? { name: { $regex: new RegExp(name), $options: "i" } }
+    : {};
+   
+  const { limit, offset } = getPagination(page, size);
+  
+  
+  try {
+    const data = await Transaction.find({ customer: `${customer}` });
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+*/}
+});
 
 router.post("/getransactions/", async (req, res) => {
   try {
@@ -98,7 +137,6 @@ router.post("/getransactions/", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
-
 
 /*
 export const getAllTransactionController = async (req, res) => {

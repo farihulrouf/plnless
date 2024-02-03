@@ -18,7 +18,9 @@ router.get('/getall', async (req, res) => {
      
     const { limit, offset } = getPagination(page, size);
   //{ sort: 'desc' }
-    Model.paginate(condition, { offset, limit })
+  //var query = {};
+
+    Model.paginate(condition, { offset, limit } )
       .then((data) => {
         res.send({
           totalItems: data.totalDocs,

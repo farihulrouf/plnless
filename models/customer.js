@@ -37,14 +37,8 @@ const dataSchema = new mongoose.Schema({
     }
 })
 
-//module.exports = mongoose.model('Customer', dataSchema)
 
 dataSchema.plugin(mongoosePaginate);
 const Customermodel = mongoose.model('Customer', dataSchema);
 Customermodel.paginate().then({}); // Usage
-
-//partSchema.plugin(mongoosePaginate);
-
-//const part = mongoose.model("part", partSchema);
-
 module.exports = Customermodel;
