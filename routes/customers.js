@@ -17,8 +17,6 @@ router.get('/getall', async (req, res) => {
       : {};
      
     const { limit, offset } = getPagination(page, size);
-  //{ sort: 'desc' }
-  //var query = {};
 
     Model.paginate(condition, { offset, limit } )
       .then((data) => {
@@ -84,10 +82,21 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/getnomer/', async (req, res) => {
+router.post('/getnomer', async (req, res) => {
+    const nomer = req.query.no;
+    //var name = req.query.nama;
+
+   // console.log('ini data', nomer)
+
+    // customer: `${id}` 
     try {
-        var nomer = req.body.nomer;
-        var data = await Model.findOne({no_id: nomer})
+       // var nomer = req.body.id;
+        //console.log(nomer)
+       /* const data = await Model.find({ no_id: `${nomer}` })
+        .limit(1)
+        .exec();
+        */
+        var data = await Model.findOne({no_id: `${nomer}`})
         return  res.status(200).send({ success: true,msg: "Customer Details", user:data});
        } catch (error) {
             res.status(400).send({success:false, msg: error.message})
