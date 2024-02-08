@@ -4,10 +4,17 @@ const User = require('../models/user');
 
 exports.protect = async (req, res, next) => {
   // 1) Getting token and check if its there
-  let token;
+  //const token = req.headers["authorization"];
+
+ {/* let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+   // console.log('data', token)
   } 
+*/}
+  const token = req.headers["authorization"];
+
+  //console.log('data',token)
 
   if (!token) {
     // return res.redirect('/signin');

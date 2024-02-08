@@ -86,7 +86,9 @@ router.post("/login", async (req, res) => {
         {
             user_id: user._id,
             email: user.email,
-            username: user.username        },
+            username: user.username,
+            typeuser: user.typeuser      
+        },
         
         process.env.JWT_SECRET,
         {
@@ -103,6 +105,7 @@ router.post("/login", async (req, res) => {
       user: {
         username: user.username,
         email: user.email,
+        typeuser: user.typeuser,
         token: jwtToken
       }
       // res.json({ token: jwt.sign({ username: user.username, email: user.email }, 'RESTFULAPIs') })
@@ -114,5 +117,25 @@ router.post("/login", async (req, res) => {
     });
   }
 });
+
+/*
+exports.allAccess = (req, res) => {
+  res.status(200).send("Public Content.");
+};
+
+exports.userBoard = (req, res) => {
+  res.status(200).send("User Content.");
+};
+
+exports.adminBoard = (req, res) => {
+  res.status(200).send("Admin Content.");
+};
+
+exports.moderatorBoard = (req, res) => {
+  res.status(200).send("Moderator Content.");
+};
+*/
+
+
 
 module.exports = router;
