@@ -118,44 +118,50 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-  //  const { id } = req.params;
+    //  const { id } = req.params;
     const id = req.params.id;
 
     const { username, email, password, typeuser } = req.body;
-    console.log("data params",id)
-    
+    console.log("data params", id);
+
     if (!username || !email || !password || !typeuser) {
       return res.status(400).json({
         success: false,
         message: "Please enter All Fields",
       });
     }
-    
-    {/*
+
+    {
+      /*
     const data = await User.findById(req.params.id);
     if(data) {
       res.status(200).send({msg: "user Not found!"})
     }
-    */}
+    */
+    }
     const salt = await bcrypt.genSalt(10);
 
     const hashedPassword = await bcrypt.hash(password, salt);
+    const updateData = {
+      username,
+      email,
+      password: hashedPassword,
+      typeuser
+    }
+    //console.log(req.body);
+    //password = hashedPassword
 
-    const user = await User.findByIdAndUpdate({ _id: id }, req.body, {
-      new: true,
-    })
-    res.status(200).json(
-       {
-          msg: "Successful updated",
-          user: user
-      }
-    )
-    
+    const user = await User.findByIdAndUpdate(
+      { _id: id }, updateData,{new: true,}
+    );
+    res.status(200).json({
+      msg: "Successful updated",
+      user: user,
+    });
   } catch (error) {
-    res.status(500).json({msg: err.message})
+    res.status(500).json({ msg: error.message });
   }
 });
 /*
