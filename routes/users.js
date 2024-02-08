@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
+const { use } = require("bcrypt/promises");
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password, typeuser} = req.body;
+    const { username, email, password, typeuser } = req.body;
 
     // console.log(userusername, email, password);
 
@@ -35,7 +36,7 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      typeuser
+      typeuser,
     });
 
     return res.status(200).json({
@@ -83,22 +84,21 @@ router.post("/login", async (req, res) => {
     }
 
     let jwtToken = jwt.sign(
-        {
-            user_id: user._id,
-            email: user.email,
-            username: user.username,
-            typeuser: user.typeuser      
-        },
-        
-        process.env.JWT_SECRET,
-        {
-            expiresIn: "1h"
-        }
-    )
+      {
+        user_id: user._id,
+        email: user.email,
+        username: user.username,
+        typeuser: user.typeuser,
+      },
+
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     delete user.password;
 
-    
     return res.status(200).json({
       success: true,
       message: `Welcome back`,
@@ -106,8 +106,8 @@ router.post("/login", async (req, res) => {
         username: user.username,
         email: user.email,
         typeuser: user.typeuser,
-        token: jwtToken
-      }
+        token: jwtToken,
+      },
       // res.json({ token: jwt.sign({ username: user.username, email: user.email }, 'RESTFULAPIs') })
     });
   } catch (err) {
@@ -118,6 +118,46 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+router.put('/:id', async (req, res) => {
+  try {
+  //  const { id } = req.params;
+    const id = req.params.id;
+
+    const { username, email, password, typeuser } = req.body;
+    console.log("data params",id)
+    
+    if (!username || !email || !password || !typeuser) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter All Fields",
+      });
+    }
+    
+    {/*
+    const data = await User.findById(req.params.id);
+    if(data) {
+      res.status(200).send({msg: "user Not found!"})
+    }
+    */}
+    const salt = await bcrypt.genSalt(10);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    })
+    res.status(200).json(
+       {
+          msg: "Successful updated",
+          user: user
+      }
+    )
+    
+  } catch (error) {
+    res.status(500).json({msg: err.message})
+  }
+});
 /*
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -135,7 +175,5 @@ exports.moderatorBoard = (req, res) => {
   res.status(200).send("Moderator Content.");
 };
 */
-
-
 
 module.exports = router;
