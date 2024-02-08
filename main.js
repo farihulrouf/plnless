@@ -1,14 +1,15 @@
 "use strict";
-function main(lines) { // lines: Array<string>
+function main(lines) {
+  // lines: Array<string>
   /**
    * このコードは標準入力と標準出力を用いたサンプルコードです。
    * このコードは好きなように編集・削除してもらって構いません。
    *
    * This is a sample code to use stdin and stdout.
    * You can edit and even remove this code as you like.
-  */
+   */
 
-  const trimmedInput = input.trim().toLowerCase();
+  const trimmedInput = lines.trim().toLowerCase();
 
   switch (trimmedInput) {
     case "world":
@@ -20,9 +21,8 @@ function main(lines) { // lines: Array<string>
     default:
       console.log("Unknown input");
   }
-  
 
-   lines.forEach((v, i) => console.log(`lines[${i}]: ${v}`));
+  lines.forEach((v, i) => console.log(`lines[${i}]: ${v}`));
 }
 
 function runWithStdin() {
@@ -30,7 +30,7 @@ function runWithStdin() {
   process.stdin.resume();
   process.stdin.setEncoding("utf8");
 
-  process.stdin.on("data", v => {
+  process.stdin.on("data", (v) => {
     input += v;
   });
   process.stdin.on("end", () => {

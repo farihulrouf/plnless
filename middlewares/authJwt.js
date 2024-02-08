@@ -1,6 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const isTokenExpired = (token) => {
+  const payloadBase64 = token.split('.')[1];
+  const decodedJson = Buffer.from(payloadBase64, 'base64').toString();
+  const decoded = JSON.parse(decodedJson)
+  const exp = decoded.exp;
+  const expired = (Date.now() >= exp * 1000)
+  return expired
+}
+
 
 exports.protect = async (req, res, next) => {
   // 1) Getting token and check if its there
@@ -20,6 +29,13 @@ exports.protect = async (req, res, next) => {
     // return res.redirect('/signin');
     return res.status(401).json({ message: "Token is missing" });
   }
+  //const isToken = isTokenExpired(token)
+  if(isTokenExpired(token)){
+    return res.status(401).json({ 
+      authorization: false,
+      message: "Token Have been expired" 
+    });
+  }
   // 2) Verification token
   const decoded = await jwt.verify(token, process.env.JWT_SECRET);
   //console.log(decoded);
@@ -28,7 +44,8 @@ exports.protect = async (req, res, next) => {
   const currentUser = await User.findById(decoded.user_id);
   //console.log(currentUser);
   if (!currentUser) {
-    return res.status(401).json({ message: "The user belonging to this email does not exist" });
+    return res.status(401).json(
+      { message: "The user belonging to this email does not exist" });
   }
 
   // Grant Access to protected route
