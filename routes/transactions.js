@@ -177,12 +177,33 @@ router.get("/all", async (req, res) => {
       Batch: { $addToSet: "$batch" }
    }}
    */
+  //  const created = 2024;
+
+  {/*$match: {
+    date: {
+      $gte: "2022-01-01",
+      $lte: "2022-12-30",
+    },
+  },
+*/}
+    console.log("data sekarang",new Date())
     const data = await Transaction.aggregate([
-      /*{
+      // year: { $year: "$date" }, "$gte": 0,  "$lte": 1100
+      //date: {
+      //  $gte: start_date_of_the_year,
+        //$lte: end_date_of_the_year,
+      //},
+      
+      {
         $match: {
-          no_id: no_id,
-        },
-      },*/
+          $expr: {
+            "$eq": [{ "$month": "$created_at" }, 1 ],
+            //"$lte": [{ "$month": "$created_at" }, 1 ],
+           // "$gte": [{ "$month": "$created_at" }, 3 ]
+          }
+        }
+      },
+      
       {
         $group: {
           _id: { $month: "$created_at" },
@@ -192,8 +213,21 @@ router.get("/all", async (req, res) => {
             },
           },
           count: { $sum: 1 },
+
+          used: {
+            $sum: {
+              $toInt: "$meteran",
+            }
+          },
+          avg_used: {
+            $avg: "$meteran"
+          },
+          avg_total: {
+            $avg: "$amount"
+          }
         },
       },
+      
     ]);
     return res
       .status(200)
