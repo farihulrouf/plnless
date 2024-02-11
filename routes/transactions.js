@@ -169,17 +169,19 @@ router.get("/all", async (req, res) => {
 });
 
 router.get("/getall", async (req, res) => {
-  let { page, pageSize, limit } = req.query;
+  let { page, limit } = req.query;
   // const offset = (page - 1) * limit;
   //console.log('this one', page, pageSize, parseInt(limit))
+  // var getValue = "abc";
+  //db.users.findOne({ displayName: new RegExp(regexValue, "i") }, function(err, res)
   try {
     //const no_id = req.body.nomer;
-    page = parseInt(page, 10) || 1;
-    pageSize = parseInt(pageSize, 10) || 50;
-
-    const pipeline = [
-      { $sort: { date: -1 } },
-      // { $limit: 1 },
+    //page = parseInt(page, 10) || 1;
+    //pageSize = parseInt(pageSize, 10) || 50;
+    const result = await Transaction.aggregate([
+      {
+        $match: {},
+      },
       {
         $lookup: {
           from: "customers",
@@ -188,19 +190,35 @@ router.get("/getall", async (req, res) => {
           as: "customers",
         },
       },
-      { $skip: (page - 1) * pageSize }, //.skip((page - 1) * pageSize)
-      { $limit: parseInt(limit) },
-    ];
-    const data = await Transaction.aggregate(pipeline);
-    const total = await Transaction.countDocuments();
+      {
+        $facet: {
+          metaData: [
+            {
+              $count: "totalDocuments",
+            },
+            {
+              $addFields: {
+                pageNumber: page,
+                totalPages: {
+                  $ceil: { $divide: ["$totalDocuments", parseInt(limit)] },
+                },
+              },
+            },
+          ],
+          data: [
+            {
+              $skip: (page - 1) * parseInt(limit),
+            },
+            {
+              $limit: parseInt(limit),
+            },
+          ],
+        },
+      },
+    ]);
     return res
       .status(200)
-      .send({
-        success: true,
-        msg: "Transaction Details",
-        results: data,
-        total: total,
-      });
+      .send({ success: true, msg: "Transaction Details", transaction: result });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
   }
