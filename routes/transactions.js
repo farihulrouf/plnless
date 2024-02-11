@@ -66,12 +66,13 @@ router.post("/post", async (req, res) => {
 });
 
 router.post("/getid", async (req, res) => {
-  const { page = 1, limit = 3 } = req.query
-  const id = req.body.no
+  const { page = 1, limit = 3 } = req.query;
+  const id = req.body.no;
   //console.log('id customer', id)
   try {
     // execute query with page and limit values
-    const transaction = await Transaction.find({ customer: `${id}` }).sort({ created_at: 'desc' })
+    const transaction = await Transaction.find({ customer: `${id}` })
+      .sort({ created_at: "desc" })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -106,7 +107,8 @@ router.post("/getid", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-*/}
+*/
+  }
 });
 
 router.post("/getransactions/", async (req, res) => {
@@ -133,6 +135,69 @@ router.post("/getransactions/", async (req, res) => {
     return res
       .status(200)
       .send({ success: true, msg: "Transaction Details", transaction: data });
+  } catch (error) {
+    res.status(400).send({ success: false, msg: error.message });
+  }
+});
+
+{
+  /*
+db.collection.aggregate([
+  {
+    $match: {
+      address: {
+        $in: [
+          "xx.com",
+          "yy.com",
+          "ee.com",
+          "dom.com"
+        ]
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$symbol",
+      total: {
+        $sum: {
+          "$toInt": "$balance"
+        }
+      }
+    }
+  }
+])
+*/
+}
+router.get("/all", async (req, res) => {
+  try {
+    // const created_at = req.params.created_at;
+    /*
+    { $group: {
+      _id: "$email",
+      Batch: { $addToSet: "$batch" }
+   }}
+   */
+    const data = await Transaction.aggregate([
+      /*{
+        $match: {
+          no_id: no_id,
+        },
+      },*/
+      {
+        $group: {
+          _id: { $month: "$created_at" },
+          total: {
+            $sum: {
+              $toInt: "$amount",
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    return res
+      .status(200)
+      .send({ success: true, msg: "Transaction", transaction: data });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
   }
