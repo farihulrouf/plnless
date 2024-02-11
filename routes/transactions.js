@@ -170,11 +170,13 @@ router.get("/all", async (req, res) => {
 
 router.get("/getall", async (req, res) => {
   let { page, pageSize, limit } = req.query;
+  // const offset = (page - 1) * limit;
   //console.log('this one', page, pageSize, parseInt(limit))
   try {
     //const no_id = req.body.nomer;
     page = parseInt(page, 10) || 1;
     pageSize = parseInt(pageSize, 10) || 50;
+
     const pipeline = [
       { $sort: { date: -1 } },
       // { $limit: 1 },
@@ -186,14 +188,19 @@ router.get("/getall", async (req, res) => {
           as: "customers",
         },
       },
-      //{ "$count":  "total" },
       { $skip: (page - 1) * pageSize }, //.skip((page - 1) * pageSize)
-      { $limit: parseInt(limit) }
+      { $limit: parseInt(limit) },
     ];
     const data = await Transaction.aggregate(pipeline);
+    const total = await Transaction.countDocuments();
     return res
       .status(200)
-      .send({ success: true, msg: "Transaction Details", results: data });
+      .send({
+        success: true,
+        msg: "Transaction Details",
+        results: data,
+        total: total,
+      });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
   }
