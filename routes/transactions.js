@@ -90,8 +90,6 @@ router.post("/getid", async (req, res) => {
   } catch (err) {
     console.error(err.message);
   }
-
-  
 });
 
 router.post("/getransactions/", async (req, res) => {
@@ -123,21 +121,17 @@ router.post("/getransactions/", async (req, res) => {
   }
 });
 
-
 router.get("/all", async (req, res) => {
   try {
-    
-    console.log("data sekarang", new Date());
+    //console.log("data sekarang", new Date());
     const data = await Transaction.aggregate([
-   
       {
         $match: {
           $expr: {
             $and: [
               { $gte: [{ $month: "$created_at" }, 1] },
-              { $lte: [{ $month: "$created_at" }, 2] },
+              { $lte: [{ $month: "$created_at" }, 1] },
             ],
-         
           },
         },
       },
@@ -169,6 +163,37 @@ router.get("/all", async (req, res) => {
     return res
       .status(200)
       .send({ success: true, msg: "Transaction", transaction: data });
+  } catch (error) {
+    res.status(400).send({ success: false, msg: error.message });
+  }
+});
+
+router.get("/getall", async (req, res) => {
+  let { page, pageSize, limit } = req.query;
+  //console.log('this one', page, pageSize, parseInt(limit))
+  try {
+    //const no_id = req.body.nomer;
+    page = parseInt(page, 10) || 1;
+    pageSize = parseInt(pageSize, 10) || 50;
+    const pipeline = [
+      { $sort: { date: -1 } },
+      // { $limit: 1 },
+      {
+        $lookup: {
+          from: "customers",
+          localField: "no_id",
+          foreignField: "no_id",
+          as: "customers",
+        },
+      },
+      //{ "$count":  "total" },
+      { $skip: (page - 1) * pageSize }, //.skip((page - 1) * pageSize)
+      { $limit: parseInt(limit) }
+    ];
+    const data = await Transaction.aggregate(pipeline);
+    return res
+      .status(200)
+      .send({ success: true, msg: "Transaction Details", results: data });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
   }
