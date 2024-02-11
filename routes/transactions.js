@@ -91,24 +91,7 @@ router.post("/getid", async (req, res) => {
     console.error(err.message);
   }
 
-  {
-    /*
-  const { page, size, name } = req.query;
-  var condition = name
-    ? { name: { $regex: new RegExp(name), $options: "i" } }
-    : {};
-   
-  const { limit, offset } = getPagination(page, size);
   
-  
-  try {
-    const data = await Transaction.find({ customer: `${customer}` });
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-*/
-  }
 });
 
 router.post("/getransactions/", async (req, res) => {
@@ -140,70 +123,25 @@ router.post("/getransactions/", async (req, res) => {
   }
 });
 
-{
-  /*
-db.collection.aggregate([
-  {
-    $match: {
-      address: {
-        $in: [
-          "xx.com",
-          "yy.com",
-          "ee.com",
-          "dom.com"
-        ]
-      }
-    }
-  },
-  {
-    $group: {
-      _id: "$symbol",
-      total: {
-        $sum: {
-          "$toInt": "$balance"
-        }
-      }
-    }
-  }
-])
-*/
-}
+
 router.get("/all", async (req, res) => {
   try {
-    // const created_at = req.params.created_at;
-    /*
-    { $group: {
-      _id: "$email",
-      Batch: { $addToSet: "$batch" }
-   }}
-   */
-  //  const created = 2024;
-
-  {/*$match: {
-    date: {
-      $gte: "2022-01-01",
-      $lte: "2022-12-30",
-    },
-  },
-*/}
-    console.log("data sekarang",new Date())
+    
+    console.log("data sekarang", new Date());
     const data = await Transaction.aggregate([
-      // year: { $year: "$date" }, "$gte": 0,  "$lte": 1100
-      //date: {
-      //  $gte: start_date_of_the_year,
-        //$lte: end_date_of_the_year,
-      //},
-      
+   
       {
         $match: {
           $expr: {
-            "$eq": [{ "$month": "$created_at" }, 1 ],
-            //"$lte": [{ "$month": "$created_at" }, 1 ],
-           // "$gte": [{ "$month": "$created_at" }, 3 ]
-          }
-        }
+            $and: [
+              { $gte: [{ $month: "$created_at" }, 1] },
+              { $lte: [{ $month: "$created_at" }, 2] },
+            ],
+         
+          },
+        },
       },
-      
+
       {
         $group: {
           _id: { $month: "$created_at" },
@@ -217,17 +155,16 @@ router.get("/all", async (req, res) => {
           used: {
             $sum: {
               $toInt: "$meteran",
-            }
+            },
           },
           avg_used: {
-            $avg: "$meteran"
+            $avg: "$meteran",
           },
           avg_total: {
-            $avg: "$amount"
-          }
+            $avg: "$amount",
+          },
         },
       },
-      
     ]);
     return res
       .status(200)
@@ -237,166 +174,4 @@ router.get("/all", async (req, res) => {
   }
 });
 
-/*
-export const getAllTransactionController = async (req, res) => {
-  try {
-    const { userId, type, frequency, startDate, endDate } = req.body;
-
-    console.log(userId, type, frequency, startDate, endDate);
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Create a query object with the user and type conditions
-    const query = {
-      user: userId,
-    };
-
-    if (type !== 'all') {
-      query.transactionType = type;
-    }
-
-    // Add date conditions based on 'frequency' and 'custom' range
-    if (frequency !== 'custom') {
-      query.date = {
-        $gt: moment().subtract(Number(frequency), "days").toDate()
-      };
-    } else if (startDate && endDate) {
-      query.date = {
-        $gte: moment(startDate).toDate(),
-        $lte: moment(endDate).toDate(),
-      };
-    }
-
-    // console.log(query);
-
-    const transactions = await Transaction.find(query);
-
-    // console.log(transactions);
-
-    return res.status(200).json({
-      success: true,
-      transactions: transactions,
-    });
-  } catch (err) {
-    return res.status(401).json({
-      success: false,
-      messages: err.message,
-    });
-  }
-};
-
-
-export const deleteTransactionController = async (req, res) => {
-  try {
-    const transactionId = req.params.id;
-    const userId = req.body.userId;
-
-    // console.log(transactionId, userId);
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    const transactionElement = await Transaction.findByIdAndDelete(
-      transactionId
-    );
-
-    if (!transactionElement) {
-      return res.status(400).json({
-        success: false,
-        message: "transaction not found",
-      });
-    }
-
-    const transactionArr = user.transactions.filter(
-      (transaction) => transaction._id === transactionId
-    );
-
-    user.transactions = transactionArr;
-
-    user.save();
-
-    // await transactionElement.remove();
-
-    return res.status(200).json({
-      success: true,
-      message: `Transaction successfully deleted`,
-    });
-  } catch (err) {
-    return res.status(401).json({
-      success: false,
-      messages: err.message,
-    });
-  }
-};
-
-export const updateTransactionController = async (req, res) => {
-  try {
-    const transactionId = req.params.id;
-
-    const { title, amount, description, date, category, transactionType } =
-      req.body;
-
-    console.log(title, amount, description, date, category, transactionType);
-
-    const transactionElement = await Transaction.findById(transactionId);
-
-    if (!transactionElement) {
-      return res.status(400).json({
-        success: false,
-        message: "transaction not found",
-      });
-    }
-
-    if (title) {
-      transactionElement.title = title;
-    }
-
-    if (description) {
-      transactionElement.description = description;
-    }
-
-    if (amount) {
-      transactionElement.amount = amount;
-    }
-
-    if (category) {
-      transactionElement.category = category;
-    }
-    if (transactionType) {
-      transactionElement.transactionType = transactionType;
-    }
-
-    if (date) {
-      transactionElement.date = date;
-    }
-
-    await transactionElement.save();
-
-    // await transactionElement.remove();
-
-    return res.status(200).json({
-      success: true,
-      message: `Transaction Updated Successfully`,
-      transaction: transactionElement,
-    });
-  } catch (err) {
-    return res.status(401).json({
-      success: false,
-      messages: err.message,
-    });
-  }
-};
-*/
 module.exports = router;
