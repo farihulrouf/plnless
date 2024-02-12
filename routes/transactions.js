@@ -169,19 +169,21 @@ router.get("/all", async (req, res) => {
 });
 
 router.get("/getall", async (req, res) => {
-  let { page, limit } = req.query;
-  // const offset = (page - 1) * limit;
-  //console.log('this one', page, pageSize, parseInt(limit))
-  // var getValue = "abc";
-  //db.users.findOne({ displayName: new RegExp(regexValue, "i") }, function(err, res)
+  let { page, limit, s } = req.query;
+  //let s = req.body.s;
+
+ //    var data = await Model.find({name: { $regex: ".*"+s+".*"}})
+ //{position: ($regex: "senior"}}
+ //    { $match: { Code: 'Value_01', Field2: { $regex: Value_match } } },  
+
+ //{ $match : { name : "abi" } }
+ //
   try {
-    //const no_id = req.body.nomer;
-    //page = parseInt(page, 10) || 1;
-    //pageSize = parseInt(pageSize, 10) || 50;
+    var condition = s
+      ? { "customers.name": { $regex: new RegExp(s), $options: "i" } }
+      : {};
     const result = await Transaction.aggregate([
-      {
-        $match: {},
-      },
+     
       {
         $lookup: {
           from: "customers",
@@ -190,6 +192,10 @@ router.get("/getall", async (req, res) => {
           as: "customers",
         },
       },
+      {
+        $match: condition
+      },
+  
       {
         $facet: {
           metaData: [
