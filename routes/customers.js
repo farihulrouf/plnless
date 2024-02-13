@@ -72,9 +72,12 @@ router.get('/getall',auth.protect, async (req, res) => {
 
 
 //Get by ID Method
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
+    let { no } = req.query;
+    console.log('data',no)
     try {
-        const data = await Model.findById(req.params.id);
+        const data = await Model.findOne({no_id: `${no}`})
+        //const data = await Model.findOne(req.params.id);
         res.json(data)
     }
     catch (error) {

@@ -178,6 +178,8 @@ router.get("/getone", async (req, res) => {
   let { no } = req.query;
 
   try {
+    //const data = await Tr.findOne({no_id: `${no}`})
+
     const data = await Transaction.findById(no)
     res.json(data)
   } catch (error) {
