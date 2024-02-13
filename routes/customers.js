@@ -185,4 +185,53 @@ router.delete('/delete/:id', async (req, res) => {
     }
 })
 
+
+router.get("/all", async (req, res) => {
+    let { page, limit, s } = req.query;
+  
+    try {
+      var condition = s
+        ? { "name": { $regex: new RegExp(s), $options: "i" } }
+        : {};
+      const result = await Model.aggregate([
+       
+        {
+          $match: condition
+        },
+        {$sort : { created_at : -1 }},
+        {
+          $facet: {
+            metaData: [
+              {
+                $count: "totalDocuments",
+              },
+              {
+                $addFields: {
+                  pageNumber: page,
+                  totalPages: {
+                    $ceil: { $divide: ["$totalDocuments", parseInt(limit)] },
+                  },
+                },
+              },
+            ],
+            data: [
+              {
+                $skip: (page - 1) * parseInt(limit),
+              },
+              {
+                $limit: parseInt(limit),
+              },
+            ],
+          },
+        },
+      ]);
+      return res
+        .status(200)
+        .send({ success: true, msg: "Sucess", customer: result });
+    } catch (error) {
+      res.status(400).send({ success: false, msg: error.message });
+    }
+});
+  
+
 module.exports = router;
