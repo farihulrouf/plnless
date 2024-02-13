@@ -93,6 +93,7 @@ router.post("/getid", async (req, res) => {
 });
 
 router.post("/getransactions/", async (req, res) => {
+  
   try {
     const no_id = req.body.nomer;
     const data = await Transaction.aggregate([
@@ -122,6 +123,8 @@ router.post("/getransactions/", async (req, res) => {
 });
 
 router.get("/all", async (req, res) => {
+  const { from, to, } = req.query;
+
   try {
     //console.log("data sekarang", new Date());
     const data = await Transaction.aggregate([
@@ -129,8 +132,8 @@ router.get("/all", async (req, res) => {
         $match: {
           $expr: {
             $and: [
-              { $gte: [{ $month: "$created_at" }, 1] },
-              { $lte: [{ $month: "$created_at" }, 1] },
+              { $gte: [{ $month: "$created_at" }, parseInt(from)] },
+              { $lte: [{ $month: "$created_at" }, parseInt(to)] },
             ],
           },
         },
@@ -170,14 +173,7 @@ router.get("/all", async (req, res) => {
 
 router.get("/getall", async (req, res) => {
   let { page, limit, s } = req.query;
-  //let s = req.body.s;
 
- //    var data = await Model.find({name: { $regex: ".*"+s+".*"}})
- //{position: ($regex: "senior"}}
- //    { $match: { Code: 'Value_01', Field2: { $regex: Value_match } } },  
-
- //{ $match : { name : "abi" } }
- //
   try {
     var condition = s
       ? { "customers.name": { $regex: new RegExp(s), $options: "i" } }
