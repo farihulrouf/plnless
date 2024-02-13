@@ -92,7 +92,8 @@ router.post("/getid", async (req, res) => {
   }
 });
 
-router.post("/getransactions/", async (req, res) => {
+{/*
+router.post("/getransactions", async (req, res) => {
   
   try {
     const no_id = req.body.nomer;
@@ -121,6 +122,8 @@ router.post("/getransactions/", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
+*/}
+
 
 router.get("/all", async (req, res) => {
   const { from, to, } = req.query;
@@ -170,6 +173,17 @@ router.get("/all", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
+
+router.get("/getone", async (req, res) => {
+  let { no } = req.query;
+
+  try {
+    const data = await Transaction.findById(no)
+    res.json(data)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
 
 router.get("/getall", async (req, res) => {
   let { page, limit, s } = req.query;
