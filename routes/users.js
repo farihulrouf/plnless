@@ -148,14 +148,14 @@ router.put("/:id", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      typeuser
-    }
+      typeuser,
+    };
     //console.log(req.body);
     //password = hashedPassword
 
-    const user = await User.findByIdAndUpdate(
-      { _id: id }, updateData,{new: true,}
-    );
+    const user = await User.findByIdAndUpdate({ _id: id }, updateData, {
+      new: true,
+    });
     res.status(200).json({
       msg: "Successful updated",
       user: user,
@@ -164,22 +164,47 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 });
-/*
-exports.allAccess = (req, res) => {
-  res.status(200).send("Public Content.");
-};
 
-exports.userBoard = (req, res) => {
-  res.status(200).send("User Content.");
-};
+router.get("/all", async (req, res) => {
+  let { page, limit, s } = req.query;
 
-exports.adminBoard = (req, res) => {
-  res.status(200).send("Admin Content.");
-};
-
-exports.moderatorBoard = (req, res) => {
-  res.status(200).send("Moderator Content.");
-};
-*/
+  try {
+    var condition = s ? { name: { $regex: new RegExp(s), $options: "i" } } : {};
+    const result = await User.aggregate([
+      {
+        $match: condition,
+      },
+      { $sort: { created_at: -1 } },
+      {
+        $facet: {
+          metaData: [
+            {
+              $count: "totalDocuments",
+            },
+            {
+              $addFields: {
+                pageNumber: page,
+                totalPages: {
+                  $ceil: { $divide: ["$totalDocuments", parseInt(limit)] },
+                },
+              },
+            },
+          ],
+          data: [
+            {
+              $skip: (page - 1) * parseInt(limit),
+            },
+            {
+              $limit: parseInt(limit),
+            },
+          ],
+        },
+      },
+    ]);
+    return res.status(200).send({ success: true, msg: "Sucess", user: result });
+  } catch (error) {
+    res.status(400).send({ success: false, msg: error.message });
+  }
+});
 
 module.exports = router;

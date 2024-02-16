@@ -92,7 +92,8 @@ router.post("/getid", async (req, res) => {
   }
 });
 
-{/*
+{
+  /*
 router.post("/getransactions", async (req, res) => {
   
   try {
@@ -122,11 +123,11 @@ router.post("/getransactions", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
-*/}
-
+*/
+}
 
 router.get("/all", async (req, res) => {
-  const { from, to, } = req.query;
+  const { from, to } = req.query;
 
   try {
     //console.log("data sekarang", new Date());
@@ -180,12 +181,12 @@ router.get("/getone", async (req, res) => {
   try {
     //const data = await Tr.findOne({no_id: `${no}`})
 
-    const data = await Transaction.findById(no)
-    res.json(data)
+    const data = await Transaction.findById(no);
+    res.json(data);
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-})
+});
 
 router.get("/getall", async (req, res) => {
   let { page, limit, s } = req.query;
@@ -195,7 +196,6 @@ router.get("/getall", async (req, res) => {
       ? { "customers.name": { $regex: new RegExp(s), $options: "i" } }
       : {};
     const result = await Transaction.aggregate([
-     
       {
         $lookup: {
           from: "customers",
@@ -205,9 +205,9 @@ router.get("/getall", async (req, res) => {
         },
       },
       {
-        $match: condition
+        $match: condition,
       },
-      {$sort : { created_at : -1 }},
+      { $sort: { created_at: -1 } },
       {
         $facet: {
           metaData: [
@@ -239,6 +239,27 @@ router.get("/getall", async (req, res) => {
       .send({ success: true, msg: "Transaction Details", transaction: result });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
+  }
+});
+
+router.put("/update", async (req, res) => {
+  try {
+    const { id } = req.query;
+    const updatedData = req.body;
+    
+    const options = { new: true };
+
+    const result = await Transaction.findByIdAndUpdate(
+      id,
+      updatedData,
+      options
+    );
+
+    return res
+      .status(200)
+      .send({ success: true, msg: "Transaction Details", transaction: result });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
