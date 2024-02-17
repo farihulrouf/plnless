@@ -92,18 +92,12 @@ router.post("/getid", async (req, res) => {
   }
 });
 
-{
-  /*
-router.post("/getransactions", async (req, res) => {
-  
+router.get("/getransactions", async (req, res) => {
   try {
-    const no_id = req.body.nomer;
+    const { nomer } = req.query;
+    console.log("data", nomer);
     const data = await Transaction.aggregate([
-      {
-        $match: {
-          no_id: no_id,
-        },
-      },
+      { $match: { no_id: parseInt(nomer) } },
       { $sort: { date: -1 } },
       { $limit: 1 },
       {
@@ -116,15 +110,15 @@ router.post("/getransactions", async (req, res) => {
       },
     ]);
     //console.log(`${no_id}`)
+
+    //`${no}`
     return res
       .status(200)
-      .send({ success: true, msg: "Transaction Details", transaction: data });
+      .send({ success: true, msg: "Transaction", transaction: data });
   } catch (error) {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
-*/
-}
 
 router.get("/all", async (req, res) => {
   const { from, to } = req.query;
@@ -246,7 +240,7 @@ router.put("/update", async (req, res) => {
   try {
     const { id } = req.query;
     const updatedData = req.body;
-    
+
     const options = { new: true };
 
     const result = await Transaction.findByIdAndUpdate(
