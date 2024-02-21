@@ -138,10 +138,14 @@ router.get("/all", async (req, res) => {
           },
         },
       },
-
+      
       {
         $group: {
-          _id: { $month: "$created_at" },
+          _id: { 
+         
+            status: "$status",
+          
+          },
           total: {
             $sum: {
               $toInt: "$amount",
