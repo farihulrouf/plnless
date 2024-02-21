@@ -21,6 +21,7 @@ router.post("/post", async (req, res) => {
       noinv,
       no_id,
       meteran,
+      last_meteran
     } = req.body;
 
     if (!title || !amount || !transactionType) {
@@ -47,6 +48,7 @@ router.post("/post", async (req, res) => {
       noinv: noinv,
       no_id: no_id,
       meteran: meteran,
+      last_meteran: last_meteran
     });
     //customer.transactions.push(newTransaction);
 
