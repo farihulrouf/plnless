@@ -291,9 +291,9 @@ router.get("/idcustomer", async (req, res) => {
     const { no } = req.query;
   //db.bios.find().limit( 5 ).sort( { name: 1 } )
 
-   console.log("data", no);
+   //console.log("data", no);
     const data = await 
-    Transaction.findOne({customer:no}).sort({date: -1}).limit(1)
+    Transaction.findOne({no_id:no}).sort({date: -1}).limit(1)
     {/*
     const data = await Transaction.aggregate([
       { $match: { customer: no } },

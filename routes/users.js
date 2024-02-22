@@ -6,11 +6,11 @@ const jwt = require("jsonwebtoken");
 const { use } = require("bcrypt/promises");
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password, typeuser } = req.body;
+    const { username, email, password, typeuser, no_id } = req.body;
 
     // console.log(userusername, email, password);
-
-    if (!username || !email || !password || !typeuser) {
+    //console.log(req.body)
+    if (!username || !email || !password || !typeuser || !no_id) {
       return res.status(400).json({
         success: false,
         message: "Please enter All Fields",
@@ -37,6 +37,7 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
       typeuser,
+      no_id,
     });
 
     return res.status(200).json({
@@ -51,7 +52,6 @@ router.post("/register", async (req, res) => {
     });
   }
 });
-
 
 router.post("/login", async (req, res) => {
   try {
@@ -90,6 +90,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         username: user.username,
         typeuser: user.typeuser,
+        no_id: user.no_id
       },
 
       process.env.JWT_SECRET,
