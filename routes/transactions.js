@@ -177,7 +177,7 @@ router.get("/all", async (req, res) => {
 
 router.get("/getone", async (req, res) => {
   let { no } = req.query;
-  console.log('data',no)
+ // console.log('data',no)
   try {
     //Location.findById(req.params.id).then(data => console.log(data))
     const data = await Transaction.findById(no);
@@ -267,6 +267,7 @@ router.get("/getlast", async (req, res) => {
   try {
     const { nomer } = req.query;
     //console.log("data", nomer);
+    //
     const data = await Transaction.aggregate([
       { $match: { no_id: parseInt(nomer) } },
       { $sort: { date: -1 } },
@@ -282,6 +283,33 @@ router.get("/getlast", async (req, res) => {
     res.status(400).send({ success: false, msg: error.message });
   }
 });
+
+
+
+router.get("/idcustomer", async (req, res) => {
+  try {
+    const { no } = req.query;
+  //db.bios.find().limit( 5 ).sort( { name: 1 } )
+
+   console.log("data", no);
+    const data = await 
+    Transaction.findOne({customer:no}).sort({date: -1}).limit(1)
+    {/*
+    const data = await Transaction.aggregate([
+      { $match: { customer: no } },
+      { $sort: { date: -1 } },
+      { $limit: 1 }
+    ]);
+    */}
+    
+    return res
+      .status(200)
+      .send({ success: true, msg: "Transaction", transaction: data });
+  } catch (error) {
+    res.status(400).send({ success: false, msg: error.message });
+  }
+});
+
 
 
 module.exports = router;
