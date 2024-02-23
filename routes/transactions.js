@@ -245,7 +245,7 @@ router.put("/update", async (req, res) => {
   try {
     const { id } = req.query;
     const updatedData = req.body;
-
+    updatedData.updated_at = new Date();
     const options = { new: true };
 
     const result = await Transaction.findByIdAndUpdate(
