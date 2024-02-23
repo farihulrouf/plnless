@@ -18,6 +18,7 @@ router.post("/post", async (req, res) => {
   }
 });
 
+{/*
 router.put("/:id", async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
@@ -26,6 +27,7 @@ router.put("/:id", async (req, res) => {
   }
   const id = req.params.id;
   ///:id
+  //console.log('cek id', id)
   Model.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
       if (!data) {
@@ -40,6 +42,22 @@ router.put("/:id", async (req, res) => {
       });
     });
 });
+*/}
+
+router.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const options = { new: true };
+    //console.log('nilai', id)
+    const result = await Model.findByIdAndUpdate(id, updatedData, options);
+
+    res.send(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 router.get("/getall", async (req, res) => {
   try {
@@ -50,4 +68,13 @@ router.get("/getall", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  let { id } = req.query;
+  try {
+    const data = await Model.findOne({ _id: id });
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 module.exports = router;
