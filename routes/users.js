@@ -126,7 +126,7 @@ router.put("/:id", async (req, res) => {
     const id = req.params.id;
 
     const { username, email, password, typeuser } = req.body;
-    console.log("data params", id);
+    //console.log("data params", id);
 
     if (!username || !email || !password || !typeuser) {
       return res.status(400).json({
