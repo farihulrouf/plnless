@@ -73,14 +73,14 @@ router.post("/getid", async (req, res) => {
   //console.log('id customer', id)
   try {
     // execute query with page and limit values
-    const transaction = await Transaction.find({ customer: `${id}` })
+    const transaction = await Transaction.find({ no_id: `${id}` })
       .sort({ created_at: "desc" })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
 
     // get total documents in the Posts collection
-    const count = await Transaction.countDocuments({ customer: `${id}` });
+    const count = await Transaction.countDocuments({ no_id: `${id}` });
 
     // return response with posts, total pages, and current page
     res.json({
